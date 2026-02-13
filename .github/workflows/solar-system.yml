@@ -78,6 +78,8 @@
       runs-on: ubuntu-latest
       needs: docker
       environment: development
+      # outputs:
+      #   APP_INGRESS_URL:
       steps:
         - name: Install Kubernetes Cluster
           uses: helm/kind-action@v1
@@ -95,3 +97,8 @@
             echo "kubectl returned $?"
             kubectl -n default get pod
             sleep 10
+    integration-testing:
+      needs: dev-deploy
+      uses: ./.github/workflows/reusable-workflow.yml
+      with:
+        ingress-url: ${{ needs.dev-deploy.outputs.APP_INGRESS_URL }}
